@@ -26,7 +26,11 @@ exports.answer = function(req, res) {
 }
 
 exports.index = function(req, res) {
-  models.Quiz.findAll().success(function(quizes) {
+	var findOptions = (req.query.search) ? {
+		where: ['pregunta like ?', '%'+req.query.search.replace(' ','%')+'%'],
+		order: [['pregunta', 'ASC']]
+	} : {};
+  models.Quiz.findAll(findOptions).success(function(quizes) {
     res.render('quizes/index.ejs', {quizes: quizes});
   });
 }
