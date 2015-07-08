@@ -5,7 +5,6 @@ exports.load = function(req, res, next, quizId){
 	models.Quiz.find(quizId).then(
 		function(quiz) {
 			if(quiz) {
-console.log(quiz);
 				req.quiz = quiz;
 				next();
 			} else {
@@ -32,10 +31,18 @@ exports.answer = function(req, res) {
 }
 
 exports.index = function(req, res) {
-	var findOptions = (req.query.search) ? {
-		where: ['pregunta like ?', '%'+req.query.search.replace(' ','%')+'%'],
+	var findOptions = {
+		where: {},
 		order: [['pregunta', 'ASC']]
-	} : {};
+	};
+	if (req.query.search) {
+		findOptions.where.pregunta = {
+			$like: '%'+req.query.search.replace(' ','%')+'%'
+		}
+	}
+	if (req.query.cat) {
+		findOptions.where.tema = req.query.cat;
+	}
   models.Quiz.findAll(findOptions).then(function(quizes) {
     res.render('quizes/index.ejs', {quizes: quizes, errors: []});
   });

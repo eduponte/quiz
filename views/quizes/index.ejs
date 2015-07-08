@@ -1,6 +1,23 @@
 
 <form method="get" action="/quizes">
-  <input type="text" name="search" value=""/>
+  <label for="pregunta" class="rem">Pregunta:</label>
+  <input id="pregunta" type="text" name="search" value=""/>
+  <label for="tema" class="rem">Tema:</label>
+  <select id="tema" name="cat">
+  <option disable selected></option>
+  <% var categories = {
+      'otro':'Otro',
+      'humanidades': 'Humanidades',
+      'ocio': 'Ocio',
+      'ciencia': 'Ciencia',
+      'tecnologia': 'Tecnología'
+    };
+    for (var k in categories) { %>
+    <option value="<%= k %>">
+      <%= categories[k] %>
+    </option>
+  <% } %>
+  </select>
   <input type="submit" value="Buscar"/>
 </form>
 <table>
