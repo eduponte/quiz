@@ -1,4 +1,8 @@
 
+exports.loginRequired = function(req, res, next) {
+  (req.session.user) ? next() : res.redirect('/login');
+}
+
 exports.new = function(req, res) {
     var errors = req.session.errors || {};
     req.session.errors = {};
