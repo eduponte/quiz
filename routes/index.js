@@ -12,6 +12,7 @@ router.get('/', function(req, res) {
 
 // autoloads quizId-aware requests
 router.param('quizId', quizController.load);
+router.param('commentId', commentController.load);
 
 // quizes routes
 router.get('/quizes',                      quizController.index);
@@ -25,6 +26,7 @@ router.delete('/quizes/:quizId(\\d+)',     sessionController.loginRequired, quiz
 
 router.get('/quizes/:quizId(\\d+)/comments/new',  commentController.new);
 router.post('/quizes/:quizId(\\d+)/comments',     commentController.create);
+router.get('/quizes/:quizId(\\d+)/comments/:commentId/publish',     sessionController.loginRequired, commentController.publish);
 
 router.get('/author',                      quizController.author);
 

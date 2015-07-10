@@ -5,6 +5,12 @@
 </form>
 
 <p><a href="/quizes/<%= quiz.id %>/comments/new"><button>Nuevo comentario</button></a></p>
-<%for(index in quiz.Comments){%>
-  <p>- <%=quiz.Comments[index].texto%>
+<%for(var i in quiz.Comments){ comment = quiz.Comments[i];%>
+  <%if(comment.publicado || session.user){%>
+    <p>- <%=comment.texto%>
+    <%if(session.user && !comment.publicado){%>
+      <a href="/quizes/<%=quiz.id%>/comments/<%=comment.id%>/publish"><button>Publicar</button></a>
+    <%}%>
+    </p>
+  <%}%>
 <%}%>
