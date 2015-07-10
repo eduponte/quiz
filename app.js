@@ -28,12 +28,25 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req, res, next) {
+  var currentTime = new Date().getTime();
+  var lastInteraction = req.session.lastInteraction || currentTime;
+  req.session.lastInteraction = currentTime;
+  if ((currentTime - lastInteraction) >= 120000) { // 2 minutes
+    if (req.session.user) {
+      delete req.session.user;
+      res.redirect('/login');
+    }
+  }
+  next();
+});
+
+app.use(function(req, res, next) {
   if (!req.path.match(/\/login|\/logout/)) {
     req.session.redir = req.path;
   }
   res.locals.session = req.session;
   next();
-})
+});
 
 app.use('/', routes);
 
