@@ -1,4 +1,5 @@
 var models = require('../models/models.js');
+var Promise = require('sequelize').Promise;
 
 //load
 exports.load = function(req, res, next, quizId){
@@ -92,6 +93,23 @@ exports.update = function(req, res) {
 			});
 		}
 	});
+};
+
+exports.statistics = function(req, res, next) {
+	Promise.join(
+		models.Quiz.count(),
+		models.Comment.count({
+			where: {publicado: true}
+		}),
+		models.Quiz.count({
+			where: ['EXISTS (SELECT c.id FROM "Comments" c WHERE "Quiz"."id" = c."QuizId" and c."publicado")']
+		}),
+		models.Quiz.count({
+			where: ['NOT EXISTS (SELECT c.id FROM "Comments" c WHERE "Quiz"."id" = c."QuizId" and c."publicado")']
+		}),
+		function(numQuizes,numComments,numCommentedQuizes,numUncommentedQuizes) {
+			res.render('quizes/statistics', {numQuizes: numQuizes, numComments: numComments, numCommentedQuizes: numCommentedQuizes, numUncommentedQuizes: numUncommentedQuizes, errors: []});
+	}).catch(function(error) { next(error); });
 };
 
 exports.author = function(req, res) {
